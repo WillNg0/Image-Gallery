@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,18 +22,26 @@ public class ImageController {
 
     //allows us to assign an image to imageId
     @PostMapping(
-            path = "{imageId}/image/upload",
+            path = "image/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void uploadImage(@RequestParam("file")MultipartFile file,
-                            @RequestParam(value = "title", required = false) String title,
-                            @RequestParam(value = "description", required = false) String description) {
-        imageService.uploadImage(file, title, description);
+    public void uploadImage(@RequestParam("file")MultipartFile file//,
+                            //@RequestParam(value = "title", required = false) String title,
+                            //@RequestParam(value = "description", required = false) String description
+                            ) {
+        imageService.uploadImage(file/*, title, description*/);
     }
 
-    @GetMapping(path = "{imageId}/image/download", produces = MediaType.ALL_VALUE)
-    public byte[] downloadImage(@PathVariable("imageId") UUID imageId) {
-        return imageService.downloadImage(String.valueOf(imageId));
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Image> getAllImages() {
+        return imageService.getAllImages();
     }
+
+    @GetMapping(path = "{imageKey}/image/download", produces = MediaType.ALL_VALUE)
+    public byte[] downloadImage(@PathVariable("imageKey") String s3Key) {
+        return imageService.downloadImage(s3Key);
+    }
+
+
 }

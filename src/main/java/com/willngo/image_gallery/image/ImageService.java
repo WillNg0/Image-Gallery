@@ -26,7 +26,7 @@ public class ImageService {
 
     }
 
-    void uploadImage(MultipartFile file,String title, String description) {
+    void uploadImage(MultipartFile file/*,String title, String description*/) {
         if(file.isEmpty()) {
             throw new IllegalStateException(("Cannot upload empty file"));
         }
@@ -56,8 +56,8 @@ public class ImageService {
             throw new IllegalStateException(e);
         }
 
-        Image image = new Image(originalFileName, key, title, description);
-
+        Image image = new Image(originalFileName, key /*, title, description*/);
+        imageRepository.addImage(image);
     }
 
     public Optional<Image> getImageById(UUID id) {
@@ -75,6 +75,10 @@ public class ImageService {
 
         // 3) Fetch from S3 using the stored key
         return fileStore.getObject(bucketName, s3Key);
+    }
+
+    public List<Image> getAllImages() {
+        return imageRepository.getAllImages();
     }
 
     //TODO: add a update title method

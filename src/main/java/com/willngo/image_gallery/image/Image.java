@@ -36,10 +36,21 @@ public class Image {
         this.title = title;
     }
 
+    public Image(String imageFileLink, String imageKey) {
+        this.imageFileLink = imageFileLink;
+        this.imageKey = imageKey;
+        this.description = "";
+        this.title = "";
+    }
 
     public UUID getId() {
         return id;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
 
     public Optional<String> getImageFileLink() {
         return Optional.ofNullable(imageFileLink); //if pfp is null
