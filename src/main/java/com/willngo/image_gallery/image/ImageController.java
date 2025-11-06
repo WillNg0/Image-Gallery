@@ -26,11 +26,11 @@ public class ImageController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public void uploadImage(@RequestParam("file")MultipartFile file//,
-                            //@RequestParam(value = "title", required = false) String title,
-                            //@RequestParam(value = "description", required = false) String description
+    public void uploadImage(@RequestParam("file")MultipartFile file,
+                            @RequestParam(value = "title", required = false) String title,
+                            @RequestParam(value = "description", required = false) String description
                             ) {
-        imageService.uploadImage(file/*, title, description*/);
+        imageService.uploadImage(file, title, description);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,5 +43,15 @@ public class ImageController {
         return imageService.downloadImage(s3Key);
     }
 
+    @PutMapping(path = "{imageKey}/title")
+    public void editTitle(@PathVariable("imageKey") String imageKey,
+                           @RequestParam("title") String title) {
+        imageService.editTitle(title, imageKey);
+    }
 
+    @PutMapping(path = "{imageKey}/description")
+    public void editDescription(@PathVariable("imageKey") String imageKey,
+                                 @RequestParam("description") String description) {
+        imageService.editDescription(description, imageKey);
+    }
 }

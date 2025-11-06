@@ -29,8 +29,7 @@ public class Image {
     public Image() {}
 
     //parameterized constructor for creating new images
-    public Image(String imageFileLink, String imageKey, String title, String description) {
-        this.imageFileLink = imageFileLink;
+    public Image(String imageKey, String title, String description) {
         this.imageKey = imageKey;
         this.description = description;
         this.title = title;

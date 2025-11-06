@@ -171,19 +171,19 @@ public class ImageRepository {
         }
     }
 
-    public void changeTitle(String title, UUID id){
-        String sql = "UPDATE images SET title = ? WHERE id = ?";
+    public void editTitle(String title, String key){
+        String sql = "UPDATE images SET title = ? WHERE image_key = ?";
 
         try(Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, title);
-            stmt.setObject(2, id);
+            stmt.setObject(2, key);
 
             int rowsAffected = stmt.executeUpdate();
 
             if(rowsAffected == 0) {
-                throw new RuntimeException("No image found with that id");
+                throw new RuntimeException("No image found with that key");
             }
 
         }
@@ -192,19 +192,19 @@ public class ImageRepository {
         }
     }
 
-    public void changeDescription(String description, UUID id){
-        String sql = "UPDATE images SET description = ? where id = ?";
+    public void editDescription(String description, String key){
+        String sql = "UPDATE images SET description = ? where image_key = ?";
 
         try(Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, description);
-            stmt.setObject(2, id);
+            stmt.setObject(2, key);
 
             int rowsAffected = stmt.executeUpdate();
 
             if(rowsAffected == 0) {
-                throw new RuntimeException("No image found with that id");
+                throw new RuntimeException("No image found with that key");
             }
 
         }

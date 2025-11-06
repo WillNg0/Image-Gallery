@@ -3,14 +3,11 @@ import './App.css'
 import axios from 'axios'
 import {useDropzone} from 'react-dropzone'
 
-
 const Images = () => {
 
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  //const [refresh, setRefresh] = useState({});
 
   const fetchImages = () => {
     setLoading(true);
@@ -57,29 +54,25 @@ const Images = () => {
   }
 
   return (
-  <>
+  <div className='Images'>
     {images.map((image, index) => (
       <div key={index}>
+        <h1 className='text'>{image.title}</h1>
         {image.imageKey ? 
           <img
             src={`http://localhost:8080/api/v1/image-gallery/${image.imageKey}/image/download`}
             alt={image.title || "image"}
           />
          : null}
-         <br/>
-         <br/>
-         <h1>{image.title || "untitled"}</h1>
-         <p>{image.description || "no description"}</p>
-         <MyDropzone imageKey={image.imageKey} onUploaded={fetchImages} />
+         <p className='text'>{image.description}</p>
          <br/>
       </div>
     ))}
-  </>
-);
-  
+  </div>
+  ); 
 }
 
-function MyDropzone({imageKey, onUploaded}) {
+function MyDropzone({onUploaded, title, description}) {
 
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
@@ -94,10 +87,13 @@ function MyDropzone({imageKey, onUploaded}) {
 
     const formData = new FormData();
     formData.append("file", file);
-    
-    // const uploadUrl = imageKey
-    //   ? `http://localhost:8080/api/v1/image-gallery/${imageKey}/image/upload`
-    //   : `http://localhost:8080/api/v1/image-gallery/image/upload`
+
+    if(title) {
+      formData.append("title", title);
+    }
+    if(description) {
+      formData.append("description", description);
+    }
 
     axios.post(`http://localhost:8080/api/v1/image-gallery/image/upload`, formData,
       {
@@ -116,7 +112,7 @@ function MyDropzone({imageKey, onUploaded}) {
       setUploadError("Upload failed. Try again");
       setUploading(false);
     });
-  }, [imageKey, onUploaded]);
+  }, [onUploaded, title, description]);
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
 
@@ -125,9 +121,10 @@ function MyDropzone({imageKey, onUploaded}) {
     border: '2px dashed #ccc',
     borderRadius: '4px',
     padding: '20px',
+    margin: '100px 0 0 0',
     textAlign: 'center',
     cursor: 'pointer',
-    backgroundColor: isDragActive ? 'red' : 'green'
+    backgroundColor: isDragActive ? '' : ''
   }}>
     <input {...getInputProps()} />
     {
@@ -136,13 +133,61 @@ function MyDropzone({imageKey, onUploaded}) {
         <p>Drag 'n' drop profile image, or click to select profile image</p>
     }
   </div>
-  )} 
+  )
+} 
 
+
+const NavBar = ({show, onUpload}) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  
+  const uploadClear = () => {
+    //clear form after upload
+    setTitle('');
+    setDescription('');
+    if(typeof onUpload === 'function') {
+      onUpload();
+    }
+  }
+  return (
+    <div className={show ? 'sideNav active' : 'sideNav'}>
+      <ul>
+         <br/>
+         <form>
+          <label htmlFor='titleInput'>Title:</label>
+          <input className="title"
+                 id='titleInput' 
+                 type="text" 
+                 placeholder='Add a title...'
+                 value={title}
+                 onChange={(e) => setTitle(e.target.value)}
+                 />
+          <br/>
+          <label htmlFor='descriptionInput'>Description:</label>
+          <input id='descriptionInput' 
+                 type="text" 
+                 placeholder='Add a description...'
+                 value={description}
+                 onChange={(e) => setDescription(e.target.value)}
+                 />
+         </form>
+         <MyDropzone classname='dropzone' onUploaded={uploadClear} title={title} description={description} />
+      </ul>
+    </div>
+  )
+}
+  
 function App() {
-
+  const [showNav, setShowNav] = useState(false);
   return (
       <div className="App">
+        <header>
+          <button className="uploadButton" onClick={() => setShowNav(!showNav)}>upload</button>
+          <NavBar show={showNav} />
+        </header>
+        <div>
         <Images />
+        </div>
       </div>
   )
 }

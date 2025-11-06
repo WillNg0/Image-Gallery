@@ -26,7 +26,7 @@ public class ImageService {
 
     }
 
-    void uploadImage(MultipartFile file/*,String title, String description*/) {
+    void uploadImage(MultipartFile file, String title, String description) {
         if(file.isEmpty()) {
             throw new IllegalStateException(("Cannot upload empty file"));
         }
@@ -56,7 +56,10 @@ public class ImageService {
             throw new IllegalStateException(e);
         }
 
-        Image image = new Image(originalFileName, key /*, title, description*/);
+        String imageTitle = (title != null) ? title : "";
+        String imageDescription = (title != null) ? description : "";
+        Image image = new Image(key, imageTitle, imageDescription);
+
         imageRepository.addImage(image);
     }
 
@@ -69,9 +72,9 @@ public class ImageService {
     }
 
     public byte[] downloadImage(String s3Key) {
-        // 1) Find the user by id
-        Image image = imageRepository.findByS3Key(s3Key)
-                .orElseThrow(() -> new IllegalArgumentException("Image not found with S3 key: " + s3Key));
+//        // 1) Find the user by id
+//        Image image = imageRepository.findByS3Key(s3Key)
+//                .orElseThrow(() -> new IllegalArgumentException("Image not found with S3 key: " + s3Key));
 
         // 3) Fetch from S3 using the stored key
         return fileStore.getObject(bucketName, s3Key);
@@ -81,8 +84,13 @@ public class ImageService {
         return imageRepository.getAllImages();
     }
 
-    //TODO: add a update title method
-    //TODO: add a update description method
+    public void editTitle(String title, String key) {
+        imageRepository.editTitle(title, key);
+    }
+
+    public void editDescription(String description, String key) {
+        imageRepository.editDescription(description, key);
+    }
     //TODO: add a delete method
     //after implementing these -> update controller calss
 
