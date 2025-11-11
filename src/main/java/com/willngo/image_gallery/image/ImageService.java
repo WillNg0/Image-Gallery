@@ -63,10 +63,6 @@ public class ImageService {
         imageRepository.addImage(image);
     }
 
-    public Optional<Image> getImageById(UUID id) {
-        return imageRepository.findById(id);
-    }
-
     public Optional<Image> getImageByKey(String key) {
         return imageRepository.findByS3Key(key);
     }
@@ -91,7 +87,8 @@ public class ImageService {
     public void editDescription(String description, String key) {
         imageRepository.editDescription(description, key);
     }
-    //TODO: add a delete method
-    //after implementing these -> update controller calss
 
+    public void deleteImage(String imageKey) {
+        imageRepository.deleteImage(imageKey);
+    }
 }

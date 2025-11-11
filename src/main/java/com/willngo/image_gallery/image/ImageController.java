@@ -54,4 +54,9 @@ public class ImageController {
                                  @RequestParam("description") String description) {
         imageService.editDescription(description, imageKey);
     }
-}
+
+    @DeleteMapping(path="{imageKey}")
+    public void deleteImage(@PathVariable("imageKey") String imageKey) {
+        imageService.deleteImage(imageKey);
+    }
+ }

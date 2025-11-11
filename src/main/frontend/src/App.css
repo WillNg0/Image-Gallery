@@ -41,13 +41,16 @@ header {
 }
 
 .sideNav {
-  width: 1000px;
+  width: 750px;
   background: #011627;
-  position: absolute;
-  height: 100vw;
+  position: fixed;
+  top: 100px;
+  height: calc(100vh - 100px);
   padding: 8px 50px 0px 10px;
   left: -100%;
   transition: all 1s;
+  z-index: 1000;
+  overflow-y: auto;
 }
 
 .sideNav.active {
@@ -57,29 +60,4 @@ header {
 .title {
   margin: 20px 100px 50px 0;
 }
-
-/* .uploadButton {
-  background: none;
-  border: none;
-  color: white;
-} */
-
-/* reset default spacing
-html, body, #root, .App {
-  margin: 0;
-  padding: 0;
-} */
-
-/* remove header default margin and style
-.App header {
-  margin: 0;
-  padding: 12px 16px;
-} */
-
-/* ensure navbar sits directly under header
-.sideNav {
-  margin: 0;
-  padding: 8px 0;
-} */
-
 

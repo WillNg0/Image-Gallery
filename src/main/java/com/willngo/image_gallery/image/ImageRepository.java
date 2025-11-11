@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Repository
 public class ImageRepository {
-    
+
     @Autowired
     private DataSource dataSource; //injects database connection pool
 
@@ -41,34 +41,6 @@ public class ImageRepository {
         }
         catch(SQLException e) {
             throw new RuntimeException("Error uploading image: " + e.getMessage(), e);
-        }
-    }
-
-    public Optional<Image> findById(UUID id) {
-        String sql = "SELECT id, image_file_link, image_key, title, description FROM images WHERE id = ?";
-
-        try(Connection conn = dataSource.getConnection(); //database connection pool
-            PreparedStatement stmt = conn.prepareStatement(sql)) { //automatically closes resources when done to prevent leaks
-
-            //sets first ? parameter with id
-            stmt.setObject(1, id);
-
-            ResultSet res = stmt.executeQuery();
-
-            if(res.next()) {
-                Image image = new Image();
-                image.setId((UUID) res.getObject("id"));
-                image.setImageFileLink(res.getString("image_file_link"));
-                image.setImageKey(res.getString("image_key"));
-                image.setTitle(res.getString("title"));
-                image.setDescription(res.getString("description"));
-
-                return Optional.of(image);
-            }
-            return Optional.empty();
-        }
-        catch(SQLException e) {
-            throw new RuntimeException("Database error when finding image by id: " + e.getMessage(), e);
         }
     }
 
@@ -100,35 +72,8 @@ public class ImageRepository {
         }
     }
 
-    public Optional<Image> findByTitle(String title) {
-        String sql = "SELECT id, image_file_link, image_key, title, description FROM images WHERE title = ?";
-
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setObject(1, title);
-
-            ResultSet res = stmt.executeQuery();
-
-            if(res.next()) {
-                Image image = new Image();
-                image.setId((UUID) res.getObject("id"));
-                image.setImageFileLink(res.getString("image_file_link"));
-                image.setImageKey(res.getString("image_key"));
-                image.setTitle(res.getString("title"));
-                image.setDescription(res.getString("description"));
-
-                return Optional.of(image);
-            }
-            return Optional.empty();
-        }
-        catch(SQLException e) {
-            throw new RuntimeException("Couldn't find image with title:" + e.getMessage(), e);
-        }
-    }
-
     public List<Image> getAllImages(){
-        String sql = "SELECT id, image_file_link, image_key, title, description FROM images";
+        String sql = "SELECT id, image_file_link, image_key, title, description FROM images ORDER BY id DESC";
 
         try(Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -153,13 +98,13 @@ public class ImageRepository {
         }
     }
 
-    public void delete(UUID id) {
-        String sql = "DELETE FROM images WHERE id = ?";
+    public void deleteImage(String imageKey) {
+        String sql = "DELETE FROM images WHERE image_key = ?";
 
         try(Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, id);
+            stmt.setObject(1, imageKey);
             int rowsAffected = stmt.executeUpdate();
 
             if(rowsAffected == 0){
@@ -214,3 +159,4 @@ public class ImageRepository {
     }
 
 }
+
